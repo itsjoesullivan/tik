@@ -1,0 +1,14 @@
+{
+  "name": "tik-cli",
+  "version": "0.0.1",
+  "description": "",
+  "bin": {
+    "tik": "./tik"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "license": "ISC"
+}

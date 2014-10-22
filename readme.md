@@ -1,13 +1,14 @@
+# GitHub issue handler
 
-tick -K 12312321
+tik -K 12312321
 
-tick 100 +in-progress
+tik 100 +in-progress
 
-tick 100 -in-progress
+tik 100 -in-progress
 
-tick {number} 
+tik {number} 
 
 
-tick -i {key} 1100
+tik -i {key} 1100
 
-tick -i
+tik -i
