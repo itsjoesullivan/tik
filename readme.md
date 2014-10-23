@@ -2,7 +2,7 @@
 
 ##Install
 
-Two steps: install via npm, then ensure you've got a GITHUB_TOKEN in your path
+Two steps: install via npm, then ensure you've got a GITHUB_TOKEN in your path. See "Personal Access Tokens" [here](https://github.com/settings/applications)
 
 `npm install -g tik-cli`
 
