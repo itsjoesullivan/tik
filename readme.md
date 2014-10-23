@@ -15,7 +15,9 @@ Use from inside a git repo.
 
 `tik 1` Summarize ticket #1
 
-###Open / Close tickets
+###Open / close tickets
+
+Note: you can only open existing tickets.
 
 `tik close 1` Close ticket #1
 
