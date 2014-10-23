@@ -26,6 +26,7 @@ Note: you can only open existing tickets.
 ###List
 
 `tik ls` list open tickets, using format: `#{index}: {title} - {author} label1 label2...`
+`tik ls -a` list all tickets
 
 
 ###Labels

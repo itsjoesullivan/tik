@@ -7,6 +7,7 @@ var moment = require('moment');
 
 program.version(require('./package').version)
   .option('ls', 'List issues')
+  .option('-a, --all', 'Include closed issues')
   .option('-i, --identity [path]', 'Auth token (See: https://github.com/settings/tokens/new)')
   .option('-v, --verbose', 'More')
   .option('-l, --label [label]', 'Toggle a label')
@@ -38,7 +39,9 @@ config.token = token || process.env.GITHUB_TOKEN;
 var req = Req(config);
 
 if (process.argv.indexOf('ls') > -1) {
-  req("GET", "/issues", function(err, tickets) {
+  var issuesPath = '/issues?';
+  if (program.all) issuesPath += 'state=all&';
+  req("GET", issuesPath, function(err, tickets) {
     if (err) return handleError(err);
     tickets.forEach(function(ticket) {
       process.stdout.write('#' + ticket.number + ': ' + ticket.title + ' - ' + ticket.user.login);
