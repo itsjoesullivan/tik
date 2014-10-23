@@ -13,9 +13,6 @@ program.version(require('./package').version)
   .option('--remove-label [label-to-remove]', 'Remove a label')
   .parse(process.argv);
 
-
-
-
 /* 
  * Retrieve token if passed arg
  */
@@ -75,8 +72,8 @@ if (ticketNumber) {
     req("GET", "/issues/" + ticketNumber, function(err, ticket) {
       var labelName = program.label || program.addLabel || program.removeLabel;
       var has = hasLabel(ticket, labelName);
-      if (program.removeLabel &! has) {
-        console.log('Label "' + labelName + '" doesn\'t exists.');
+      if (program.removeLabel && !has) {
+        console.log('#1 does not have label "' + labelName + '.');
       } else if ((program.label && has) || program.removeLabel) {
         var labels = ticket.labels
           .map(function(label) { return label.name; })
@@ -84,10 +81,10 @@ if (ticketNumber) {
         req("PATCH", "/issues/" + ticketNumber, {
           labels: labels
         }, function(err, ticket) {
-          console.log("Removed label " + labelName);
+          console.log("Removed label " + labelName + " from #" + ticketNumber);
         });
       } else if (has && program.addLabel) {
-        console.log('Label "' + labelName + '" already exists.');
+        console.log('#1 already has label "' + labelName + '.');
       } else if (program.addLabel || (!has && program.label)) {
         // Add
         var labels = ticket.labels
@@ -96,7 +93,7 @@ if (ticketNumber) {
         req("PATCH", "/issues/" + ticketNumber, {
           labels: labels
         }, function(err, ticket) {
-          console.log("Added label " + labelName);
+          console.log("Added label " + labelName + " to #" + ticketNumber);
         });
       }
     });
