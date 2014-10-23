@@ -15,7 +15,7 @@ Two steps: install via npm, then ensure you've got a GITHUB_TOKEN in your path
 
 ###List
 
-`tik ls` list open tickets
+`tik ls` list open tickets, using format: `#{index}: {title} - {author} label1 label2...`
 
 
 ###Labels
