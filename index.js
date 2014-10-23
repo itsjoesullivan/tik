@@ -3,6 +3,7 @@ var Req = require('./lib/req');
 var fs = require('fs');
 var path = require('path');
 var charm = require('charm')(process.stdout);
+var moment = require('moment');
 
 program.version(require('./package').version)
   .option('ls', 'List issues')
@@ -149,14 +150,25 @@ function getRepoInfo(dir) {
  */
 function describeTicket(ticketNumber) {
   req("GET", "/issues/" + ticketNumber, function(err, val) {
-    console.log("Ticket     " + val.number);
-    console.log("  Title    " + val.title);
-    console.log("  State    " + val.state);
-    console.log("  Owner    " + val.user.login);
-    if (program.verbose) {
-      console.log("  Body     " + val.body);
-    }
-    console.log("  Comments " + val.comments);
+    req("GET", "/issues/" + ticketNumber + "/comments", function(err, comments) {
+      console.log("Ticket #" + val.number);
+      console.log("  Title    " + val.title);
+      console.log("  State    " + val.state);
+      console.log("  Owner    " + val.user.login);
+      if (program.verbose) {
+        console.log("  Body     " + val.body);
+      }
+      if (comments.length) {
+        console.log("  Comments");
+        comments.forEach(function(comment) {
+          console.log("    " + comment.user.login + " (" + moment(comment.updated_at).fromNow()+ ")");
+          var body = comment.body.split('\n');
+          body.forEach(function(line) {
+            console.log("      " + line);
+          });
+        });
+      }
+    });
   });
 }
 
