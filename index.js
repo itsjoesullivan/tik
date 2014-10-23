@@ -58,7 +58,7 @@ var statusChange = getStatusChange(process.argv);
 /** Return an array of rgb figures from a hex color
  *
  * @param {String} hexString
- * @returns [Array]
+ * @returns {Array}
  */
 function hex2rgb(hexString) {
   return [
