@@ -53,7 +53,7 @@ if (process.argv.indexOf('ls') > -1) {
 }
 
 var ticketNumber = getTicketNumber(process.argv);
-
+var statusChange = getStatusChange(process.argv);
 
 /** Return an array of rgb figures from a hex color
  *
@@ -68,11 +68,21 @@ function hex2rgb(hexString) {
   ]
 }
 
-
-
-
 if (ticketNumber) {
-  if (program.label || program.addLabel || program.removeLabel) {
+  if (statusChange) {
+    var newState = statusChange === 'close' ? "closed" : "opened";
+    req("GET", "/issues/" + ticketNumber, function(err, ticket) {
+      if (ticket.state.match(statusChange)) {
+        console.log("Ticket #" + ticketNumber + " is already " + newState);
+      } else {
+      req("PATCH", "/issues/" + ticketNumber, {
+        state: statusChange
+      }, function(err, val) {
+        console.log("Ticket #" + ticketNumber + " " + newState);
+      });
+      }
+    });
+  } else if (program.label || program.addLabel || program.removeLabel) {
     req("GET", "/issues/" + ticketNumber, function(err, ticket) {
       var labelName = program.label || program.addLabel || program.removeLabel;
       var has = hasLabel(ticket, labelName);
@@ -203,6 +213,22 @@ function getTicketNumber(args) {
   for(var i = 1; i < args.length; i++) {
     var arg = args[i];
     if ('' + parseInt(arg) === arg && args[i-1].indexOf('-') !== 0) {
+      return arg;
+    }
+  }
+}
+
+/*
+ * Retrieve a status change, if one is available
+ *
+ * @param {Array} args
+ * @returns {String}
+ *
+ */
+function getStatusChange(args) {
+  for(var i = 1; i < args.length; i++) {
+    var arg = args[i];
+    if ( (arg === 'open' || arg === 'close') && args[i-1].indexOf('-') !== 0) {
       return arg;
     }
   }
