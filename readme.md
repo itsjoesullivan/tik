@@ -9,9 +9,14 @@ Two steps: install via npm, then ensure you've got a GITHUB_TOKEN in your path
 
 ##Usage
 
-`tik ls` list open tickets
+###Summary
 
 `tik 1` Summarize ticket #1
+
+###ls
+
+`tik ls` list open tickets
+
 
 ###Labels
 
