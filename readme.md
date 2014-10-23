@@ -9,6 +9,8 @@ Two steps:
 
 ##Usage
 
+Use from inside a git repo.
+
 ###Summarize
 
 `tik 1` Summarize ticket #1
