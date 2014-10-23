@@ -12,6 +12,7 @@ program.version(require('./package').version)
   .option('-l, --label [label]', 'Toggle a label')
   .option('--add-label [label-to-add]', 'Add a label')
   .option('--remove-label [label-to-remove]', 'Remove a label')
+  .option('-C, --comment [comment]', 'Add a comment')
   .parse(process.argv);
 
 /* 
@@ -51,6 +52,9 @@ if (process.argv.indexOf('ls') > -1) {
   });
 }
 
+var ticketNumber = getTicketNumber(process.argv);
+
+
 /** Return an array of rgb figures from a hex color
  *
  * @param {String} hexString
@@ -65,7 +69,6 @@ function hex2rgb(hexString) {
 }
 
 
-var ticketNumber = getTicketNumber(process.argv);
 
 
 if (ticketNumber) {
@@ -97,6 +100,12 @@ if (ticketNumber) {
           console.log("Added label " + labelName + " to #" + ticketNumber);
         });
       }
+    });
+  } else if (program.comment) {
+    req("POST", "/issues/" + ticketNumber + "/comments", {
+      body: program.comment
+    }, function(err, val) {
+      console.log("Comment added to #" + ticketNumber);
     });
   } else {
     describeTicket(ticketNumber);

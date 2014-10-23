@@ -27,3 +27,7 @@ Use from inside a git repo.
 `tik 1 --add-label bug` Add 'bug' label for ticket #1
 
 `tik 1 --remove-label bug` Remove 'bug' label for ticket #1
+
+###Comments
+
+`tik 1 --comment "Comment text"` Add a new comment to ticket #1
