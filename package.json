@@ -1,6 +1,6 @@
 {
   "name": "tik-cli",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "",
   "bin": {
     "tik": "./tik"
@@ -10,5 +10,9 @@
     "test": "mocha"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "xmlhttprequest": "~1.6.0",
+    "commander": "~2.4.0"
+  }
 }
