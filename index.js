@@ -45,8 +45,8 @@ if (process.argv.indexOf('ls') > -1) {
         charm.foreground(labelColor[0], labelColor[1], labelColor[2]).write(label.name);
         charm.foreground(255, 255, 255);
       });
+      process.stdout.write('\n');
     });
-    process.stdout.write('\n');
   });
 }
 
