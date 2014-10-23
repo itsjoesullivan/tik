@@ -1,14 +1,5 @@
-# GitHub issue handler
+# github issue utility.
 
-tik -K 12312321
-
-tik 100 +in-progress
-
-tik 100 -in-progress
-
-tik {number} 
-
-
-tik -i {key} 1100
-
-tik -i
+`tik ls` -- list open tickets
+`tik 1` -- Summarize ticket #1
+`tik 1 --label bug` -- Toggle 'bug' label
