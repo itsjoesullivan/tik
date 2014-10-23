@@ -39,6 +39,7 @@ var req = Req(config);
 
 if (process.argv.indexOf('ls') > -1) {
   req("GET", "/issues", function(err, tickets) {
+    if (err) return handleError(err);
     tickets.forEach(function(ticket) {
       process.stdout.write('#' + ticket.number + ': ' + ticket.title + ' - ' + ticket.user.login);
       ticket.labels.forEach(function(label) {
@@ -72,18 +73,21 @@ if (ticketNumber) {
   if (statusChange) {
     var newState = statusChange === 'close' ? "closed" : "opened";
     req("GET", "/issues/" + ticketNumber, function(err, ticket) {
+      if (err) return handleError(err);
       if (ticket.state.match(statusChange)) {
         console.log("Ticket #" + ticketNumber + " is already " + newState);
       } else {
       req("PATCH", "/issues/" + ticketNumber, {
         state: statusChange
       }, function(err, val) {
+        if (err) return handleError(err);
         console.log("Ticket #" + ticketNumber + " " + newState);
       });
       }
     });
   } else if (program.label || program.addLabel || program.removeLabel) {
     req("GET", "/issues/" + ticketNumber, function(err, ticket) {
+      if (err) return handleError(err);
       var labelName = program.label || program.addLabel || program.removeLabel;
       var has = hasLabel(ticket, labelName);
       if (program.removeLabel && !has) {
@@ -95,6 +99,7 @@ if (ticketNumber) {
         req("PATCH", "/issues/" + ticketNumber, {
           labels: labels
         }, function(err, ticket) {
+          if (err) return handleError(err);
           console.log("Removed label " + labelName + " from #" + ticketNumber);
         });
       } else if (has && program.addLabel) {
@@ -107,6 +112,7 @@ if (ticketNumber) {
         req("PATCH", "/issues/" + ticketNumber, {
           labels: labels
         }, function(err, ticket) {
+          if (err) return handleError(err);
           console.log("Added label " + labelName + " to #" + ticketNumber);
         });
       }
@@ -115,6 +121,7 @@ if (ticketNumber) {
     req("POST", "/issues/" + ticketNumber + "/comments", {
       body: program.comment
     }, function(err, val) {
+      if (err) return handleError(err);
       console.log("Comment added to #" + ticketNumber);
     });
   } else {
@@ -169,7 +176,9 @@ function getRepoInfo(dir) {
  */
 function describeTicket(ticketNumber) {
   req("GET", "/issues/" + ticketNumber, function(err, val) {
+    if (err) return handleError(err);
     req("GET", "/issues/" + ticketNumber + "/comments", function(err, comments) {
+      if (err) return handleError(err);
       console.log("Ticket #" + val.number);
       console.log("  Title    " + val.title);
       console.log("  State    " + val.state);
@@ -232,4 +241,8 @@ function getStatusChange(args) {
       return arg;
     }
   }
+}
+
+function handleError(error) {
+  console.log(error.status + " " + JSON.parse(error.responseText).message);
 }
