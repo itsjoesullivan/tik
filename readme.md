@@ -9,7 +9,7 @@ Two steps:
 
 ##Usage
 
-###Summary
+###Summarize
 
 `tik 1` Summarize ticket #1
 
