@@ -121,12 +121,31 @@ if (ticketNumber) {
       }
     });
   } else if (program.comment) {
-    req("POST", "/issues/" + ticketNumber + "/comments", {
-      body: program.comment
-    }, function(err, val) {
-      if (err) return handleError(err);
-      console.log("Comment added to #" + ticketNumber);
-    });
+    var postComment = function(message) {
+      req("POST", "/issues/" + ticketNumber + "/comments", {
+        body: message
+      }, function(err, val) {
+        if (err) return handleError(err);
+        console.log("Comment added to #" + ticketNumber);
+      });
+    };
+    if (typeof program.comment === 'string') {
+      postComment(program.comment);
+    } else {
+      // No message--try it in an external editor.
+      try {
+        fs.unlinkSync(__dirname + '/TIK_COMMENT');
+      } catch(e) { }
+      var spawn = require('child_process').spawn,
+      vim = spawn('vim', [__dirname + '/TIK_COMMENT'], { stdio: 'inherit' });
+      vim.on('close', function(code, signal) {
+        try {
+          var commentText = fs.readFileSync(__dirname + '/TIK_COMMENT', 'binary');
+          fs.unlinkSync(__dirname + "/TIK_COMMENT");
+          postComment(commentText);
+        } catch(e) {}
+      });
+    }
   } else {
     describeTicket(ticketNumber);
   }
