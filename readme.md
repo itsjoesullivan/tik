@@ -15,6 +15,12 @@ Use from inside a git repo.
 
 `tik 1` Summarize ticket #1
 
+###Open / Close tickets
+
+`tik close 1` Close ticket #1
+
+`tik open 1` Open ticket #1
+
 ###List
 
 `tik ls` list open tickets, using format: `#{index}: {title} - {author} label1 label2...`
