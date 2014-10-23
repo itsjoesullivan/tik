@@ -13,7 +13,7 @@ Two steps: install via npm, then ensure you've got a GITHUB_TOKEN in your path
 
 `tik 1` Summarize ticket #1
 
-###ls
+###List
 
 `tik ls` list open tickets
 
