@@ -6,6 +6,8 @@ if (firstArg === 'ls') {
   require('./ls');
 } else if ('' + parseInt(firstArg) === firstArg) {
   require('./ticket');
+} else if (firstArg === 'plumbing') {
+  require('./plumbing');
 } else {
   console.log("usage: tik ls [options]");
   console.log("       tik {ticket} [options]");
