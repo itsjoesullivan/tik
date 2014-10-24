@@ -40,3 +40,7 @@ Note: you can only open existing tickets.
 ###Comments
 
 `tik 1 comment "Comment text"` Add a new comment to ticket #1
+
+##Plumbing
+
+`tik plumbing ticket-numbers` List of `\n`-separated ticket numbers
