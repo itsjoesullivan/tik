@@ -11,6 +11,7 @@ var args = process.argv.filter(function(arg) { return arg !== 'plumbing'; });
 
 program.version(require('./package').version)
   .option('-i, --identity [path]', 'Auth token (See: https://github.com/settings/tokens/new)')
+  .option('-a, --all', 'Include closed issues')
   .parse(args);
 
 /* 
