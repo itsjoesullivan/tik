@@ -8,6 +8,8 @@ if (firstArg === 'ls') {
   require('./ticket');
 } else if (firstArg === 'plumbing') {
   require('./plumbing');
+} else if (firstArg === 'completion') {
+  require('./completion');
 } else {
   console.log("usage: tik ls [options]");
   console.log("       tik {ticket} [options]");
