@@ -9,8 +9,7 @@ module.exports = function *(obj) {
 
   var program = obj.program;
   var req = obj.req;
-  var stdout = obj.stdout;
-  var charm = require('charm')(stdout);
+  var charm = require('charm')(process.stdout);
 
   var hex2rgb = require('./lib/hex2rgb');
 
@@ -25,13 +24,13 @@ module.exports = function *(obj) {
     yield err;
   }
   tickets.forEach(function(ticket) {
-    stdout.write('#' + ticket.number + ': ' + ticket.title + ' - ' + ticket.user.login);
+    process.stdout.write('#' + ticket.number + ': ' + ticket.title + ' - ' + ticket.user.login);
     ticket.labels.forEach(function(label) {
       var labelColor = hex2rgb(label.color).map(function(val) { return val * 0.2; });
-      stdout.write(' ');
+      process.stdout.write(' ');
       charm.foreground(labelColor[0], labelColor[1], labelColor[2]).write(label.name);
       charm.foreground(255, 255, 255);
     });
-    stdout.write('\n');
+    process.stdout.write('\n');
   });
 }
