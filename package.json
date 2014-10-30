@@ -19,5 +19,8 @@
     "moment": "~2.8.3",
     "co": "~3.1.0",
     "thunkify": "~2.1.2"
+  },
+  "devDependencies": {
+    "mocha-co": "~1.17.1-co.1"
   }
 }

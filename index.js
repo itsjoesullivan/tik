@@ -1,4 +1,5 @@
 var getFirstArg = require('./lib/getFirstArg');
+var co = require('co');
 
 var firstArg = getFirstArg(process.argv);
 
@@ -34,10 +35,10 @@ if (firstArg === 'ls') {
    */
   var req = require('./lib/req')(config);
 
-  require('./ls')({
+  co(require('./ls')({
     program: program,
     req: req
-  });
+  }))();
 } else if ('' + parseInt(firstArg) === firstArg) {
   require('./ticket');
 } else if (firstArg === 'plumbing') {
