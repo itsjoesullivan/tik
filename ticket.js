@@ -33,7 +33,7 @@ switch (argAfterTicket(process.argv)) {
       .option('-l, --label [label]', 'Toggle a label')
       .option('--add-label [label-to-add]', 'Add a label')
       .option('--remove-label [label-to-remove]', 'Remove a label')
-      .option('--comments', 'Include comments')
+      .option('-c, --comments', 'Include comments')
       .parse(process.argv);
 
     /* 
