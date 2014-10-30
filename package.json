@@ -1,13 +1,13 @@
 {
   "name": "tik-cli",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "description": "",
   "bin": {
     "tik": "./tik"
   },
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "./runner.sh"
   },
   "author": "",
   "license": "ISC",
@@ -21,6 +21,7 @@
     "thunkify": "~2.1.2"
   },
   "devDependencies": {
-    "mocha-co": "~1.17.1-co.1"
+    "mocha-co": "~1.17.1-co.1",
+    "express": "~4.10.1"
   }
 }

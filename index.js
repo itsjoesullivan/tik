@@ -10,6 +10,7 @@ if (firstArg === 'ls') {
   program.version(require('./package').version)
     .option('-a, --all', 'Include closed issues')
     .option('-i, --identity [path]', 'Auth token (See: https://github.com/settings/tokens/new)')
+    .option('-h, --host [host]', 'Host')
     .option('-v, --verbose', 'More')
     .parse(args);
   /* 
@@ -29,6 +30,7 @@ if (firstArg === 'ls') {
    */
   var config = getRepoInfo(process.cwd());
   config.token = token || process.env.GITHUB_TOKEN;
+  config.host = program.host ? program.host : null;
 
   /*
    * Initialize the request processor.
