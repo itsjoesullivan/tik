@@ -19,7 +19,6 @@ module.exports = function *(obj) {
   try {
     tickets = yield req("GET", issuesPath);
   } catch(err) {
-    console.log(err);
     handleError(err);
     yield err;
   }
