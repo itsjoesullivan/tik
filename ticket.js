@@ -1,9 +1,9 @@
 var program = require('commander');
-var Req = require('./lib/req');
 var fs = require('fs');
 var path = require('path');
 var charm = require('charm')(process.stdout);
 var moment = require('moment');
+var co = require('co');
 
 var handleError = require('./lib/handleError');
 var getTicketNumber = require('./lib/getTicketNumber');
@@ -57,80 +57,102 @@ switch (argAfterTicket(process.argv)) {
     /*
      * Initialize the request processor.
      */
-    var req = Req(config);
+    var req = require('./lib/req')(config);
 
+
+    var getFullTicket = function *(ticketNumber) {
+      // Get the ticket
+      try {
+        var ticket = yield req("GET", "/issues/" + ticketNumber);
+      } catch(err) {
+        return handleError(err);
+      }
+      // Get the comments
+      try {
+        ticket.comments = yield req("GET", "/issues/" + ticketNumber + "/comments")
+      } catch(err) {
+        return handleError(err);
+      }
+      return ticket;
+    };
 
     var ticketNumber = getTicketNumber(process.argv);
     var statusChange = getStatusChange(process.argv);
+    var labelChange = program.label || program.addLabel || program.removeLabel;
 
-    if (ticketNumber) {
-      if (statusChange) {
+    if (ticketNumber && statusChange) { // We want to change the status of a specific ticket.
+      co(function *() {
         var newState = statusChange === 'close' ? "closed" : "opened";
-        req("GET", "/issues/" + ticketNumber, function(err, ticket) {
-          if (err) return handleError(err);
-          if (ticket.state.match(statusChange)) {
-            console.log("Ticket #" + ticketNumber + " is already " + newState);
-          } else {
-          req("PATCH", "/issues/" + ticketNumber, {
-            state: statusChange
-          }, function(err, val) {
-            if (err) return handleError(err);
-            console.log("Ticket #" + ticketNumber + " " + newState);
-          });
-          }
-        });
-      } else if (program.label || program.addLabel || program.removeLabel) {
-        req("GET", "/issues/" + ticketNumber, function(err, ticket) {
-          if (err) return handleError(err);
-          var labelName = program.label || program.addLabel || program.removeLabel;
-          var has = hasLabel(ticket, labelName);
-          if (program.removeLabel && !has) {
-            console.log('#' + ticketNumber + ' does not have label "' + labelName + '".');
-          } else if ((program.label && has) || program.removeLabel) {
-            var labels = ticket.labels
-              .map(function(label) { return label.name; })
-              .filter(function(label) { return label !== labelName; });
-            req("PATCH", "/issues/" + ticketNumber, {
-              labels: labels
-            }, function(err, ticket) {
-              if (err) return handleError(err);
-              console.log("Removed label " + labelName + " from #" + ticketNumber);
-            });
-          } else if (has && program.addLabel) {
-            console.log('#' + ticketNumber + ' already has label "' + labelName + '".');
-          } else if (program.addLabel || (!has && program.label)) {
-            // Add
-            var labels = ticket.labels
-              .map(function(label) { return label.name; });
-            labels.push(labelName);
-            req("PATCH", "/issues/" + ticketNumber, {
-              labels: labels
-            }, function(err, ticket) {
-              if (err) return handleError(err);
-              console.log("Added label " + labelName + " to #" + ticketNumber);
-            });
-          }
-        });
-      } else {
-        getFullTicket(ticketNumber, function(err, ticket) {
-          if (!program.comments) {
-            ticket.comments = [];
-          }
-          if (err) return handleError(err);
-          describeTicket(ticket);
-        });
-      }
+        try {
+          ticket = yield req("GET", "/issues/" + ticketNumber);
+        } catch(err) {
+          return handleError(err);
+        }
+
+        // If the ticket state is what we're looking for, were done.
+        if (ticket.state.match(statusChange)) return console.log("Ticket #" + ticketNumber + " is already " + newState);
+
+        // Perform patch
+        try {
+          res = yield req("PATCH", "/issues/" + ticketNumber, { state: statusChange });
+        } catch(err) {
+          return handleError(err);
+        }
+        console.log("Ticket #" + ticketNumber + " " + newState);
+      })();
     }
 
-    function getFullTicket(ticketNumber, cb) {
-      req("GET", "/issues/" + ticketNumber, function(err, ticket) {
-        if (err) return handleError(err);
-        req("GET", "/issues/" + ticketNumber + "/comments", function(err, comments) {
-          if (err) return handleError(err);
-          ticket.comments = comments;
-          cb(null, ticket);
-        });
-      });
+    if (ticketNumber && labelChange) {
+      co(function *() {
+        var restPath = "/issues/" + ticketNumber;
+        var ticket = yield req("GET", restPath);
+        var labelName = program.label || program.addLabel || program.removeLabel;
+        var has = hasLabel(ticket, labelName);
+
+        if (program.removeLabel && !has) return console.log('#' + ticketNumber + ' does not have label "' + labelName + '".');
+        if (program.addLabel && has) return console.log('#' + ticketNumber + ' already has label "' + labelName + '".');
+
+        // Remove the label
+        if (program.label && has || program.removeLabel) {
+          var labels = ticket.labels
+            .map(function(label) { return label.name; })
+            .filter(function(label) { return label !== labelName; });
+          try {
+            yield req("PATCH", restPath, { labels: labels });
+          } catch(err) {
+            return handleError(err);
+          }
+          return console.log("Removed label " + labelName + " from #" + ticketNumber);
+        }
+
+        // Add the label
+        if (program.label && !has || program.addLabel) {
+          var labels = ticket.labels
+            .map(function(label) { return label.name; });
+          labels.push(labelName);
+          try {
+            yield req("PATCH", restPath, { labels: labels });
+          } catch(err) {
+            return handleError(err);
+          }
+          return console.log("Added label " + labelName + " to #" + ticketNumber);
+        }
+      })();
     }
+
+    if (ticketNumber && !statusChange && !labelChange) {
+      co(function *() {
+        try {
+          var ticket = yield getFullTicket(ticketNumber);
+        } catch(err) {
+          return handleError(err);
+        }
+        if (!program.comments) {
+          ticket.comments = [];
+        }
+        describeTicket(ticket);
+      })();
+    }
+
 }
 

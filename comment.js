@@ -1,9 +1,9 @@
 var program = require('commander');
-var Req = require('./lib/req');
 var fs = require('fs');
 var path = require('path');
 var charm = require('charm')(process.stdout);
 var moment = require('moment');
+var co = require('co');
 
 var handleError = require('./lib/handleError');
 var getTicketNumber = require('./lib/getTicketNumber');
@@ -45,17 +45,18 @@ config.token = token || process.env.GITHUB_TOKEN;
 /*
  * Initialize the request processor.
  */
-var req = Req(config);
+var req = require('./lib/req')(config);
 
 if (argsAfterComment[0]) {
   var comment = argsAfterComment[0];
-  var postComment = function(message) {
-    req("POST", "/issues/" + ticketNumber + "/comments", {
-      body: message
-    }, function(err, val) {
-      if (err) return handleError(err);
-      console.log("Comment added to #" + ticketNumber);
-    });
-  };
-  postComment(comment);
+  co(function *(){
+    try {
+      yield req("POST", "/issues/" + ticketNumber + "/comments", {
+        body: comment
+      });
+    } catch(err) {
+      return handleError(err);
+    }
+    console.log("Comment added to #" + ticketNumber);
+  })();
 }

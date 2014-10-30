@@ -1,5 +1,4 @@
 var program = require('commander');
-var Req = require('./lib/req');
 var fs = require('fs');
 var path = require('path');
 var charm = require('charm')(process.stdout);
@@ -38,7 +37,7 @@ config.token = token || process.env.GITHUB_TOKEN;
 /*
  * Initialize the request processor.
  */
-var req = thunkify(Req(config));
+var req = require('./lib/req')(config);
 
 var hex2rgb = require('./lib/hex2rgb');
 
