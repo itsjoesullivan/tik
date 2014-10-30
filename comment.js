@@ -47,6 +47,8 @@ config.token = token || process.env.GITHUB_TOKEN;
  */
 var req = require('./lib/req')(config);
 
+var tmp = require('tmp');
+
 if (argsAfterComment[0]) {
   var comment = argsAfterComment[0];
   co(function *(){
@@ -59,4 +61,21 @@ if (argsAfterComment[0]) {
     }
     console.log("Comment added to #" + ticketNumber);
   })();
+} else {
+  tmp.tmpName({ template: '/tmp/tmp-XXXXXX' }, function(err, fpath) {
+    var editor = require('child_process').spawn('vi', [ fpath ], { stdio: 'inherit' });
+    editor.on('exit', function(code) {
+      comment = fs.readFileSync(fpath, 'binary');
+      co(function *(){
+        try {
+          yield req("POST", "/issues/" + ticketNumber + "/comments", {
+            body: comment
+          });
+        } catch(err) {
+          return handleError(err);
+        }
+        console.log("Comment added to #" + ticketNumber);
+      })();
+    });
+  });
 }
