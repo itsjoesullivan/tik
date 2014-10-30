@@ -21,7 +21,6 @@
     "thunkify": "~2.1.2"
   },
   "devDependencies": {
-    "mocha-co": "~1.17.1-co.1",
     "express": "~4.10.1"
   }
 }
