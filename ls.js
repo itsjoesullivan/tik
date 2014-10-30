@@ -4,6 +4,8 @@ var fs = require('fs');
 var path = require('path');
 var charm = require('charm')(process.stdout);
 var moment = require('moment');
+var co = require('co');
+var thunkify = require('thunkify');
 
 var handleError = require('./lib/handleError');
 
@@ -36,14 +38,20 @@ config.token = token || process.env.GITHUB_TOKEN;
 /*
  * Initialize the request processor.
  */
-var req = Req(config);
+var req = thunkify(Req(config));
 
 var hex2rgb = require('./lib/hex2rgb');
 
 var issuesPath = '/issues?';
 if (program.all) issuesPath += 'state=all&';
-req("GET", issuesPath, function(err, tickets) {
-  if (err) return handleError(err);
+
+
+co(function *(){
+  try {
+    tickets = yield req("GET", issuesPath);
+  } catch(err) {
+    handleError(err);
+  }
   tickets.forEach(function(ticket) {
     process.stdout.write('#' + ticket.number + ': ' + ticket.title + ' - ' + ticket.user.login);
     ticket.labels.forEach(function(label) {
@@ -54,4 +62,4 @@ req("GET", issuesPath, function(err, tickets) {
     });
     process.stdout.write('\n');
   });
-});
+})();
