@@ -45,6 +45,13 @@ if (firstArg === 'ls') {
   require('./ticket');
 } else if (firstArg === 'plumbing') {
   require('./plumbing');
+} else if (process.argv.indexOf('--in') > -1) {
+  var readline = require('readline');
+  var rl = readline.createInterface({
+    input: process.stdin,
+    output: {}
+  });
+  rl.on('line', function(cmd) { console.log('' + cmd); });
 } else {
   console.log("usage: tik ls [options]");
   console.log("       tik {ticket} [options]");
