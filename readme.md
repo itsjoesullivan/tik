@@ -19,9 +19,9 @@ Use from inside a git repo.
 
 Note: you can only open existing tickets.
 
-`tik close 1` Close ticket #1
+`tik 1 close` Close ticket #1
 
-`tik open 1` Open ticket #1
+`tik 1 open` Open ticket #1
 
 ###List
 
