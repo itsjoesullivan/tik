@@ -3,6 +3,12 @@ var assert = require('assert');
 var exec = require('child_process').exec;
 
 describe('ticket', function() {
+  it('logs error code to stderr', function(done) {
+    exec('./tik 0 --host http://localhost:4040', function(err, output, stderr) {
+      assert(/404/.test(stderr));
+      done();
+    });
+  });
   it('describes a ticket', function(done) {
     exec('./tik 1 --host http://localhost:4040', function(err, output) {
       var lines = output.split('\n');
