@@ -1,9 +1,9 @@
 {
   "name": "tik-cli",
-  "version": "0.4.11",
+  "version": "0.4.12",
   "description": "",
   "bin": {
-    "tik": "node index.js"
+    "tik": "./tik"
   },
   "main": "index.js",
   "scripts": {
