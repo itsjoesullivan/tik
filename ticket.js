@@ -64,17 +64,9 @@ switch (argAfterTicket(process.argv)) {
 
     var getFullTicket = function *(ticketNumber) {
       // Get the ticket
-      try {
-        var ticket = yield req("GET", "/issues/" + ticketNumber);
-      } catch(err) {
-        return handleError(err);
-      }
+      var ticket = yield req("GET", "/issues/" + ticketNumber);
       // Get the comments
-      try {
-        ticket.comments = yield req("GET", "/issues/" + ticketNumber + "/comments")
-      } catch(err) {
-        return handleError(err);
-      }
+      ticket.comments = yield req("GET", "/issues/" + ticketNumber + "/comments")
       return ticket;
     };
 
