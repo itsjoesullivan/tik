@@ -1,8 +1,3 @@
-var fs = require('fs');
-var path = require('path');
-var moment = require('moment');
-var co = require('co');
-var thunkify = require('thunkify');
 var handleError = require('./lib/handleError');
 
 module.exports = function *(obj) { 
