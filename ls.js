@@ -18,23 +18,29 @@ module.exports = function *(obj) {
     yield err;
   }
 
+  // Just write to stdout.
   function write(message) {
     process.stdout.write(message);
   }
-  tickets.forEach(function(ticket) {
+  
+  // Log out a ticket
+  function renderTicket(ticket) {
     write('#' + ticket.number + ' ' + '"' + ticket.title + '" ');
     if (ticket.assignee) {
       write('@' + ticket.assignee.login);
     }
-    ticket.labels.forEach(function(label) {
-      var labelColor = hex2rgb(label.color).map(function(val) { return val; });
-      write(' ');
-      charm.background(labelColor[0], labelColor[1], labelColor[2]);
-      write('  ');
-      charm.background(0, 0, 0);
-      write(' ' + label.name);
-      
-    });
+    ticket.labels.forEach(renderLabel);
     process.stdout.write('\n');
-  });
-}
+  }
+
+  // Log out a label
+  function renderLabel(label) {
+    var labelColor = hex2rgb(label.color).map(function(val) { return val; });
+    write(' ');
+    charm.background(labelColor[0], labelColor[1], labelColor[2]);
+    write('  ');
+    charm.background(0, 0, 0);
+    write(' ' + label.name);
+  }
+  tickets.forEach(renderTicket);
+};
