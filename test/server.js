@@ -2,7 +2,13 @@ var express = require('express');
 var app = express();
 
 app.get('/repos/itsjoesullivan/tik/issues/:ticket', function(req, res) {
-  res.json(require('./dummy_ticket'));
+  if (req.params.ticket === '0') {
+    res.status(404).json({
+      message: "Not Found"
+    });
+  } else {
+    res.json(require('./dummy_ticket'));
+  }
 });
 app.get('/repos/itsjoesullivan/tik/issues/:ticket/comments', function(req, res) {
   res.json(require('./dummy_comments'));
