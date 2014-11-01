@@ -5,8 +5,10 @@ var firstArg = getFirstArg(process.argv);
 
 var program = require('commander');
 
-if (firstArg === 'ls') {
+if (firstArg === 'ls') { // List tickets
+
   var args = process.argv.filter(function(arg) { return arg !== 'ls'; });
+
   program.version(require('./package').version)
     .option('-a, --all', 'Include closed issues')
     .option('-i, --identity [path]', 'Auth token (See: https://github.com/settings/tokens/new)')
@@ -41,6 +43,7 @@ if (firstArg === 'ls') {
     program: program,
     req: req
   }))();
+
 } else if ('' + parseInt(firstArg) === firstArg) {
   require('./ticket');
 } else if (firstArg === 'plumbing') {
