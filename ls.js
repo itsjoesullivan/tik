@@ -17,13 +17,23 @@ module.exports = function *(obj) {
     handleError(err);
     yield err;
   }
+
+  function write(message) {
+    process.stdout.write(message);
+  }
   tickets.forEach(function(ticket) {
-    process.stdout.write('#' + ticket.number + ': ' + ticket.title + ' - ' + ticket.user.login);
+    write('#' + ticket.number + ' ' + '"' + ticket.title + '" ');
+    if (ticket.assignee) {
+      write('@' + ticket.assignee.login);
+    }
     ticket.labels.forEach(function(label) {
-      var labelColor = hex2rgb(label.color).map(function(val) { return val * 0.2; });
-      process.stdout.write(' ');
-      charm.foreground(labelColor[0], labelColor[1], labelColor[2]).write(label.name);
-      charm.foreground(255, 255, 255);
+      var labelColor = hex2rgb(label.color).map(function(val) { return val; });
+      write(' ');
+      charm.background(labelColor[0], labelColor[1], labelColor[2]);
+      write('  ');
+      charm.background(0, 0, 0);
+      write(' ' + label.name);
+      
     });
     process.stdout.write('\n');
   });
