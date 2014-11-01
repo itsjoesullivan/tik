@@ -34,6 +34,7 @@ switch (argAfterTicket(process.argv)) {
       .option('--add-label [label-to-add]', 'Add a label')
       .option('--remove-label [label-to-remove]', 'Remove a label')
       .option('-c, --comments', 'Include comments')
+      .option('-h, --host [host]', 'Host')
       .parse(process.argv);
 
     /* 
@@ -53,6 +54,7 @@ switch (argAfterTicket(process.argv)) {
      */
     var config = getRepoInfo(process.cwd());
     config.token = token || process.env.GITHUB_TOKEN;
+    config.host = program.host ? program.host : null;
 
     /*
      * Initialize the request processor.
