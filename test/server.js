@@ -1,6 +1,13 @@
 var express = require('express');
 var app = express();
 
+app.get('/repos/itsjoesullivan/tik/issues/:ticket', function(req, res) {
+  res.json(require('./dummy_ticket'));
+});
+app.get('/repos/itsjoesullivan/tik/issues/:ticket/comments', function(req, res) {
+  res.json(require('./dummy_comments'));
+});
+
 app.get('/repos/itsjoesullivan/tik/issues', function(req, res) {
   var tickets = [ 
     {
