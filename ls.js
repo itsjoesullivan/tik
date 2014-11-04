@@ -1,15 +1,14 @@
 var handleError = require('./lib/handleError');
 
 module.exports = function *(obj) { 
-
-  var program = obj.program;
+  var options = obj.options;
   var req = obj.req;
   var charm = require('charm')(process.stdout);
 
   var hex2rgb = require('./lib/hex2rgb');
 
   var issuesPath = '/issues?';
-  if (program.all) issuesPath += 'state=all&';
+  if (options.all) issuesPath += 'state=all&';
 
   try {
     tickets = yield req("GET", issuesPath);

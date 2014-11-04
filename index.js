@@ -1,49 +1,62 @@
-var getFirstArg = require('./lib/getFirstArg');
 var co = require('co');
+var fs = require('fs');
+var program = require('commander');
+
+var getFirstArg = require('./lib/getFirstArg');
+var getRepoInfo = require('./lib/getRepoInfo');
 
 var firstArg = getFirstArg(process.argv);
 
-var program = require('commander');
+
+var args = process.argv.join(' ') + ' ';
+
+var identityExp = /(?:-i |--identity )(\S+)(?:\s)/;
+if (identityExp.test(args)) {
+  var identity = identityExp.exec(args)[1];
+}
+
+var hostExp = /(?:-h |--host )(\S+)(?:\s)/;
+if (hostExp.test(args)) {
+  var host = hostExp.exec(args)[1];
+}
+
+var allExp = /-a |--all/;
+if (allExp.test(args)) {
+  var all = true;
+}
+
+/* 
+ * Retrieve token if passed arg
+ */
+var token;
+if (identity) {
+  var identityContents = fs.readFileSync(identity, 'binary');
+  if (identityContents) {
+    token = identityContents;
+  }
+}
+
+/*
+ * Create a config object
+ */
+var config = getRepoInfo(process.cwd());
+config.token = token || process.env.GITHUB_TOKEN;
+config.host = host ? host : null;
+
+/*
+ * Initialize the request processor.
+ */
+var req = require('./lib/req')(config);
+
 
 if (firstArg === 'ls') { // List tickets
-
-  var args = process.argv.filter(function(arg) { return arg !== 'ls'; });
-
-  program.version(require('./package').version)
-    .option('-a, --all', 'Include closed issues')
-    .option('-i, --identity [path]', 'Auth token (See: https://github.com/settings/tokens/new)')
-    .option('-h, --host [host]', 'Host')
-    .option('-v, --verbose', 'More')
-    .parse(args);
-  /* 
-   * Retrieve token if passed arg
-   */
-  var token;
-  if (program.identity) {
-    var identityContents = fs.readFileSync(program.identity, 'binary');
-    if (identityContents) {
-      token = identityContents;
-    }
-  }
-
-  var getRepoInfo = require('./lib/getRepoInfo');
-  /*
-   * Create a config object
-   */
-  var config = getRepoInfo(process.cwd());
-  config.token = token || process.env.GITHUB_TOKEN;
-  config.host = program.host ? program.host : null;
-
-  /*
-   * Initialize the request processor.
-   */
-  var req = require('./lib/req')(config);
-
   co(require('./ls')({
     program: program,
-    req: req
+    req: req,
+    options: {
+      all: all
+    }
   }))();
-
 } else if ('' + parseInt(firstArg) === firstArg) {
   require('./ticket');
 } else if (firstArg === 'plumbing') {
