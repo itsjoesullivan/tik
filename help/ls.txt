@@ -1,0 +1,2 @@
+tik ls [-a/--all] [-h/--host HOST] [-i/--i TOKEN_PATH]
+  List tickets.

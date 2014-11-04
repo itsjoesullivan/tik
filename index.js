@@ -24,6 +24,10 @@ var allExp = /-a |--all/;
 if (allExp.test(args)) {
   var all = true;
 }
+var helpExp = /--help/;
+if (helpExp.test(args)) {
+  var help = true;
+}
 
 /* 
  * Retrieve token if passed arg
@@ -50,13 +54,18 @@ var req = require('./lib/req')(config);
 
 
 if (firstArg === 'ls') { // List tickets
-  co(require('./ls')({
-    program: program,
-    req: req,
-    options: {
-      all: all
-    }
-  }))();
+  if (help) {
+    process.stdout.write(fs.readFileSync('./help/ls.txt','binary'));
+    process.exit(0);
+  } else {
+    co(require('./ls')({
+      program: program,
+      req: req,
+      options: {
+        all: all
+      }
+    }))();
+  }
 } else if ('' + parseInt(firstArg) === firstArg) {
   require('./ticket');
 } else if (firstArg === 'plumbing') {
