@@ -35,5 +35,14 @@ describe('ls', function() {
         });
       });
     });
+    describe('--help', function() {
+      it('returns contents of help/ls.txt', function(done) {
+        exec('./tik ls --host http://localhost:4040 --help', function(err, output) {
+          var help = require('fs').readFileSync(__dirname + '/../help/ls.txt','binary');
+          assert.equal(output, help);
+          done();
+        });
+      });
+    });
   })
 });
