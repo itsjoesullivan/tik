@@ -73,3 +73,7 @@ if (firstArg === 'ls') { // List tickets
   console.log("       tik {ticket} [options]");
   console.log("       tik {ticket} comment {comment}");
 }
+
+process.stdout.on('error', function() {
+  process.exit(1);
+});
