@@ -10,6 +10,8 @@ module.exports = function *(obj) {
   var issuesPath = '/issues?';
   if (options.all) issuesPath += 'state=all&';
 
+  issuesPath += 'per_page=100&';
+
   try {
     tickets = yield req("GET", issuesPath);
   } catch(err) {
