@@ -43,7 +43,24 @@ if (identity) {
 /*
  * Create a config object
  */
-var config = getRepoInfo(process.cwd());
+try {
+  var config = getRepoInfo(process.cwd());
+} catch(e) {
+  var repoExp = /(\S+\/\S+)/;
+  var argsAfterFirst = args.substring(args.indexOf(firstArg));
+  if (repoExp.test(argsAfterFirst)) {
+    var repoString = repoExp.exec(argsAfterFirst)[1];
+    var repoArr = repoString.split('/');
+    var config = {
+      owner: repoArr[0],
+      repo: repoArr[1]
+    }
+  } else {
+    console.error(e);
+    process.exit(1);
+
+  }
+}
 config.token = token || process.env.GITHUB_TOKEN;
 config.host = host ? host : null;
 
