@@ -43,22 +43,21 @@ if (identity) {
 /*
  * Create a config object
  */
-try {
-  var config = getRepoInfo(process.cwd());
-} catch(e) {
-  var repoExp = /(\S+\/\S+)/;
-  var argsAfterFirst = args.substring(args.indexOf(firstArg));
-  if (repoExp.test(argsAfterFirst)) {
-    var repoString = repoExp.exec(argsAfterFirst)[1];
-    var repoArr = repoString.split('/');
-    var config = {
-      owner: repoArr[0],
-      repo: repoArr[1]
-    }
-  } else {
+var repoExp = /(\S+\/\S+)/;
+var argsAfterFirst = args.substring(args.indexOf(firstArg));
+if (repoExp.test(argsAfterFirst)) {
+  var repoString = repoExp.exec(argsAfterFirst)[1];
+  var repoArr = repoString.split('/');
+  var config = {
+    owner: repoArr[0],
+    repo: repoArr[1]
+  }
+} else {
+  try {
+    var config = getRepoInfo(process.cwd());
+  } catch(e) {
     console.error(e);
     process.exit(1);
-
   }
 }
 config.token = token || process.env.GITHUB_TOKEN;
