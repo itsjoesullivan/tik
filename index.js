@@ -43,7 +43,7 @@ if (identity) {
 /*
  * Create a config object
  */
-var repoExp = /(\S+\/\S+)/;
+var repoExp = /([A-Za-z0-9\-]+\/[A-Za-z0-9\-]+)/;
 var argsAfterFirst = args.substring(args.indexOf(firstArg));
 if (repoExp.test(argsAfterFirst)) {
   var repoString = repoExp.exec(argsAfterFirst)[1];
