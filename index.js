@@ -7,27 +7,14 @@ var getRepoInfo = require('./lib/getRepoInfo');
 
 var firstArg = getFirstArg(process.argv);
 
-
 var args = process.argv.join(' ') + ' ';
 
-var identityExp = /(?:-i |--identity )(\S+)(?:\s)/;
-if (identityExp.test(args)) {
-  var identity = identityExp.exec(args)[1];
-}
-
-var hostExp = /(?:-h |--host )(\S+)(?:\s)/;
-if (hostExp.test(args)) {
-  var host = hostExp.exec(args)[1];
-}
-
-var allExp = /-a |--all/;
-if (allExp.test(args)) {
-  var all = true;
-}
-var helpExp = /--help/;
-if (helpExp.test(args)) {
-  var help = true;
-}
+var processArgs = require('./lib/processArgs');
+var processedArgs = processArgs();
+var identity = processedArgs.identity;
+var host = processedArgs.host;
+var all = processedArgs.all;
+var help = processedArgs.help;
 
 /* 
  * Retrieve token if passed arg
@@ -99,6 +86,7 @@ if (firstArg === 'ls') { // List tickets
   console.log("       tik {ticket} comment {comment}");
 }
 
+// Exit if piping into a process that terminates.
 process.stdout.on('error', function() {
   process.exit(1);
 });
