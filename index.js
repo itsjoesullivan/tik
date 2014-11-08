@@ -9,8 +9,6 @@ var args = process.argv.join(' ') + ' ';
 var argsAfterFirst = args.substring(args.indexOf(firstArg));
 var argObj = require('./lib/processArgs')();
 
-console.log('firstArg is', firstArg);
-
 /* 
  * Retrieve token if passed arg
  */
