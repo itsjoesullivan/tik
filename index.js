@@ -1,27 +1,22 @@
 var co = require('co');
 var fs = require('fs');
-var program = require('commander');
 
 var getFirstArg = require('./lib/getFirstArg');
 var getRepoInfo = require('./lib/getRepoInfo');
 
 var firstArg = getFirstArg(process.argv);
-
 var args = process.argv.join(' ') + ' ';
+var argsAfterFirst = args.substring(args.indexOf(firstArg));
+var argObj = require('./lib/processArgs')();
 
-var processArgs = require('./lib/processArgs');
-var processedArgs = processArgs();
-var identity = processedArgs.identity;
-var host = processedArgs.host;
-var all = processedArgs.all;
-var help = processedArgs.help;
+console.log('firstArg is', firstArg);
 
 /* 
  * Retrieve token if passed arg
  */
 var token;
-if (identity) {
-  var identityContents = fs.readFileSync(identity, 'binary');
+if (argObj.identity) {
+  var identityContents = fs.readFileSync(argObj.identity, 'binary');
   if (identityContents) {
     token = identityContents;
   }
@@ -31,14 +26,13 @@ if (identity) {
  * Create a config object
  */
 var repoExp = /([A-Za-z0-9\-]+\/[A-Za-z0-9\-]+)/;
-var argsAfterFirst = args.substring(args.indexOf(firstArg));
 if (repoExp.test(argsAfterFirst)) {
   var repoString = repoExp.exec(argsAfterFirst)[1];
   var repoArr = repoString.split('/');
   var config = {
     owner: repoArr[0],
     repo: repoArr[1]
-  }
+  };
 } else {
   try {
     var config = getRepoInfo(process.cwd());
@@ -48,7 +42,7 @@ if (repoExp.test(argsAfterFirst)) {
   }
 }
 config.token = token || process.env.GITHUB_TOKEN;
-config.host = host ? host : null;
+config.host = argObj.host ? argObj.host : null;
 
 /*
  * Initialize the request processor.
@@ -57,15 +51,14 @@ var req = require('./lib/req')(config);
 
 
 if (firstArg === 'ls') { // List tickets
-  if (help) {
+  if (argObj.help) {
     process.stdout.write(fs.readFileSync('./help/ls.txt','binary'));
     process.exit(0);
   } else {
     co(require('./ls')({
-      program: program,
       req: req,
       options: {
-        all: all
+        all: argObj.all
       }
     }))();
   }
